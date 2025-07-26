@@ -1,1 +1,0 @@
-C:\Users\alezl\OneDrive\Desktop\ale\informatica\javascript\brawl-tracker-proxy\target\debug\brawlstars_proxy.exe: C:\Users\alezl\OneDrive\Desktop\ale\informatica\javascript\brawl-tracker-proxy\src\main.rs
