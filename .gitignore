@@ -1,0 +1,25 @@
+# Directory di build di Rust
+/target/
+
+# File di lock (se è un binario, puoi comunque tenerlo in repo; altrimenti commenta)
+/Cargo.lock
+
+# Variabili d’ambiente locali (non committare mai i token)
+/.env
+.env.*.local
+
+# Files di editor e IDE
+.vscode/
+.idea/
+*.swp
+*~
+
+# Files di sistema
+.DS_Store
+Thumbs.db
+
+# Log
+*.log
+
+# Cartelle di cache
+node_modules/
