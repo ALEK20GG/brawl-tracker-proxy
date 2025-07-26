@@ -6,6 +6,7 @@
 
 # Variabili d’ambiente locali (non committare mai i token)
 /.env
+/.env.template
 .env.*.local
 
 # Files di editor e IDE
