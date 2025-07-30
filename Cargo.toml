@@ -8,14 +8,8 @@ license = "MIT"
 repository = "https://github.com/tuo-utente/nuovo-repo"
 
 [dependencies]
-# Framework web leggero e asincrono
 axum = "0.8"
-
-# Runtime async
 tokio = { version = "1.37", features = ["full"] }
-
-# HTTP client per chiamate outgoing
 reqwest = { version = "0.12", features = ["json", "gzip", "stream"] }
-
-# Caricamento variabili d'ambiente da .env
+tower-http = { version = "0.5", features = ["cors"] }
 dotenv = "0.15"

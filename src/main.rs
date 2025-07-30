@@ -9,14 +9,29 @@ use dotenv::dotenv;
 use reqwest::Client;
 use std::net::SocketAddr;
 
+// ✅ AGGIUNGI QUESTO IMPORT
+use tower_http::cors::{Any, CorsLayer};
+
 #[tokio::main]
 async fn main() {
     // Carica .env (va creato localmente, ma non commit­tare)
     dotenv().ok();
 
+    use axum::http::{HeaderValue, Method};
+    let cors = CorsLayer::new()
+        .allow_origin([
+            "http://localhost:1420".parse::<HeaderValue>().unwrap(),
+            "tauri://localhost".parse::<HeaderValue>().unwrap(),
+            "capacitor://localhost".parse::<HeaderValue>().unwrap(),
+        ])
+        .allow_methods([Method::GET, Method::OPTIONS])
+        .allow_headers(Any);
+
     // Definisci il router
     let app = Router::new()
-        .route("/player/{tag}", get(get_player));
+        .route("/player/{tag}", get(get_player))
+        // ✅ APPICA IL CORS QUI
+        .layer(cors);
 
     // Bind TCP all’interfaccia 0.0.0.0:8080
     let addr: SocketAddr = "0.0.0.0:8080".parse().unwrap();
