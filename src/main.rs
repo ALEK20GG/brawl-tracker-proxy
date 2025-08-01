@@ -30,6 +30,14 @@ async fn main() {
     // Definisci il router
     let app = Router::new()
         .route("/player/{tag}", get(get_player))
+        .route("/player/{tag}/battlelog", get(get_battlelog))
+        .route("/clubs/{tag}", get(get_club))
+        .route("/brawlers", get(get_brawlers))
+        .route("/brawlers/{id}", get(get_brawler_by_id))
+        .route("/events", get(get_events))
+        .route("/rankings/{code}/players", get(get_country_rankings_players))
+        .route("/rankings/{code}/clubs", get(get_country_rankings_clubs))
+
         // ✅ APPICA IL CORS QUI
         .layer(cors);
 
@@ -68,6 +76,169 @@ async fn get_player(Path(tag): Path<String>) -> impl IntoResponse {
                 status,
                 format!("Errore Brawl Stars: {}", status),
             )
+        }
+        Err(err) => (
+            StatusCode::BAD_GATEWAY,
+            format!("Errore reqwest: {}", err),
+        ),
+    }
+}
+async fn get_battlelog(Path(tag): Path<String>) -> impl IntoResponse {
+    let token =
+        std::env::var("BRAWLSTARS_TOKEN").expect("Token mancante");
+    let url = format!(
+        "https://api.brawlstars.com/v1/players/%23{}/battlelog",
+        tag
+    );
+
+    let client = Client::new();
+    match client.get(&url).bearer_auth(token).send().await {
+        Ok(resp) if resp.status().is_success() => {
+            let body = resp.text().await.unwrap_or_default();
+            (StatusCode::OK, body)
+        }
+        Ok(resp) => {
+            let status = resp.status();
+            (
+                status,
+                format!("Errore Brawl Stars: {}", status),
+            )
+        }
+        Err(err) => (
+            StatusCode::BAD_GATEWAY,
+            format!("Errore reqwest: {}", err),
+        ),
+    }
+}
+async fn get_club(Path(tag): Path<String>) -> impl IntoResponse {
+    let token =
+        std::env::var("BRAWLSTARS_TOKEN").expect("Token mancante");
+    let url = format!(
+        "https://api.brawlstars.com/v1/clubs/%23{}",
+        tag
+    );
+
+    let client = Client::new();
+    match client.get(&url).bearer_auth(token).send().await {
+        Ok(resp) if resp.status().is_success() => {
+            let body = resp.text().await.unwrap_or_default();
+            (StatusCode::OK, body)
+        }
+        Ok(resp) => {
+            let status = resp.status();
+            (
+                status,
+                format!("Errore Brawl Stars: {}", status),
+            )
+        }
+        Err(err) => (
+            StatusCode::BAD_GATEWAY,
+            format!("Errore reqwest: {}", err),
+        ),
+    }
+}
+// /brawlers
+async fn get_brawlers() -> impl IntoResponse {
+    let token = std::env::var("BRAWLSTARS_TOKEN").expect("Token mancante");
+    let url = "https://api.brawlstars.com/v1/brawlers";
+
+    let client = Client::new();
+    match client.get(url).bearer_auth(token).send().await {
+        Ok(resp) if resp.status().is_success() => {
+            let body = resp.text().await.unwrap_or_default();
+            (StatusCode::OK, body)
+        }
+        Ok(resp) => {
+            let status = resp.status();
+            (status, format!("Errore Brawl Stars: {}", status))
+        }
+        Err(err) => (
+            StatusCode::BAD_GATEWAY,
+            format!("Errore reqwest: {}", err),
+        ),
+    }
+}
+
+// /brawlers/:id
+async fn get_brawler_by_id(Path(id): Path<u32>) -> impl IntoResponse {
+    let token = std::env::var("BRAWLSTARS_TOKEN").expect("Token mancante");
+    let url = format!("https://api.brawlstars.com/v1/brawlers/{}", id);
+
+    let client = Client::new();
+    match client.get(&url).bearer_auth(token).send().await {
+        Ok(resp) if resp.status().is_success() => {
+            let body = resp.text().await.unwrap_or_default();
+            (StatusCode::OK, body)
+        }
+        Ok(resp) => {
+            let status = resp.status();
+            (status, format!("Errore Brawl Stars: {}", status))
+        }
+        Err(err) => (
+            StatusCode::BAD_GATEWAY,
+            format!("Errore reqwest: {}", err),
+        ),
+    }
+}
+
+// /events
+async fn get_events() -> impl IntoResponse {
+    let token = std::env::var("BRAWLSTARS_TOKEN").expect("Token mancante");
+    let url = "https://api.brawlstars.com/v1/events/rotation";
+
+    let client = Client::new();
+    match client.get(url).bearer_auth(token).send().await {
+        Ok(resp) if resp.status().is_success() => {
+            let body = resp.text().await.unwrap_or_default();
+            (StatusCode::OK, body)
+        }
+        Ok(resp) => {
+            let status = resp.status();
+            (status, format!("Errore Brawl Stars: {}", status))
+        }
+        Err(err) => (
+            StatusCode::BAD_GATEWAY,
+            format!("Errore reqwest: {}", err),
+        ),
+    }
+}
+
+// /rankings/:country_code/players
+async fn get_country_rankings_players(Path(code): Path<String>) -> impl IntoResponse {
+    let token = std::env::var("BRAWLSTARS_TOKEN").expect("Token mancante");
+    let url = format!("https://api.brawlstars.com/v1/rankings/{}/players", code);
+
+    let client = Client::new();
+    match client.get(&url).bearer_auth(token).send().await {
+        Ok(resp) if resp.status().is_success() => {
+            let body = resp.text().await.unwrap_or_default();
+            (StatusCode::OK, body)
+        }
+        Ok(resp) => {
+            let status = resp.status();
+            (status, format!("Errore Brawl Stars: {}", status))
+        }
+        Err(err) => (
+            StatusCode::BAD_GATEWAY,
+            format!("Errore reqwest: {}", err),
+        ),
+    }
+}
+
+// /rankings/:country_code/clubs
+async fn get_country_rankings_clubs(Path(code): Path<String>) -> impl IntoResponse {
+    let token = std::env::var("BRAWLSTARS_TOKEN").expect("Token mancante");
+    let url = format!("https://api.brawlstars.com/v1/rankings/{}/clubs", code);
+
+    let client = Client::new();
+    match client.get(&url).bearer_auth(token).send().await {
+        Ok(resp) if resp.status().is_success() => {
+            let body = resp.text().await.unwrap_or_default();
+            (StatusCode::OK, body)
+        }
+        Ok(resp) => {
+            let status = resp.status();
+            (status, format!("Errore Brawl Stars: {}", status))
         }
         Err(err) => (
             StatusCode::BAD_GATEWAY,
